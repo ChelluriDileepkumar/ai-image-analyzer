@@ -1,0 +1,8 @@
+flask
+opencv-python
+pillow
+pytesseract
+numpy
+torch
+transformers
+scikit-image
