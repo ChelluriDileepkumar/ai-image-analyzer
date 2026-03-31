@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Analyzer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #e5e5e5;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 40px;
+        }
+
+        /* LEFT BOX */
+        .upload-box {
+            width: 400px;
+            height: 500px;
+            border: 3px solid black;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .upload-header {
+            text-align: center;
+            font-size: 24px;
+            padding: 10px;
+            border-bottom: 3px solid black;
+            font-family: cursive;
+        }
+
+        .upload-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            gap: 15px;
+        }
+
+        /* IMAGE PREVIEW */
+        #preview {
+            width: 90%;
+            height: 250px;
+            border: 2px dashed gray;
+            border-radius: 10px;
+            object-fit: contain;
+            display: none;
+            background: white;
+        }
+
+        /* RIGHT BOX */
+        .result-box {
+            width: 350px;
+            height: 500px;
+            border: 3px solid black;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-header {
+            text-align: center;
+            font-size: 24px;
+            padding: 10px;
+            border-bottom: 3px solid black;
+            font-family: cursive;
+        }
+
+        .result-content {
+            flex: 1;
+            padding: 15px;
+        }
+
+        /* ARROWS */
+        .arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 80px;
+        }
+
+        .arrow {
+            font-size: 40px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Upload Section -->
+    <div class="upload-box">
+        <div class="upload-header">Upload Image</div>
+        <div class="upload-content">
+
+            <!-- Image Preview -->
+            <img id="preview" alt="Selected Image Preview">
+
+            <form id="uploadForm">
+                <input type="file" id="imageInput" name="image" accept="image/*" required><br>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Arrows -->
+    <div class="arrows">
+        <div class="arrow">➡️</div>
+        <div class="arrow">➡️</div>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-box">
+        <div class="result-header">Image detailing</div>
+        <div class="result-content" id="result">
+            <!-- Results will appear here -->
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const form = document.getElementById("uploadForm");
+    const resultDiv = document.getElementById("result");
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+
+    // Show image preview when file is selected
+    imageInput.addEventListener("change", function () {
+        const file = imageInput.files[0];
+
+        if (file) {
+            preview.style.display = "block";
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        resultDiv.innerHTML = "<p><b>Processing...</b></p>";
+
+        const formData = new FormData(form);
+
+        const response = await fetch("/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        resultDiv.innerHTML = `
+            <p><b>Description:</b> ${data.description}</p>
+            <p><b>Lighting:</b> ${data.lighting}</p>
+            <p><b>Composition:</b> ${data.composition}</p>
+            <p><b>AI Result:</b> ${data.ai.label}</p>
+            <p><b>Real:</b> ${data.ai.real_confidence}</p>
+            <p><b>AI:</b> ${data.ai.ai_confidence}</p>
+        `;
+    });
+</script>
+
+</body>
+</html>
