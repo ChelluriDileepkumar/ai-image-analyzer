@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Detaling..!</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .box {
+            width: 400px;
+            height: 500px;
+            border: 3px solid black;
+            border-radius: 20px;
+            background: white;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid black;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        img {
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 10px;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .real {
+            color: green;
+            font-weight: bold;
+        }
+
+        .ai {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Image Detaling..!</h1>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="box">
+        <div class="title">Upload Image</div>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" required><br><br>
+            <button type="submit">Analyze</button>
+        </form>
+
+        {% if image_path %}
+            <h3>Preview:</h3>
+            <img src="{{ url_for('uploaded_file', filename=image_path) }}">
+        {% endif %}
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="box">
+        <div class="title">Image Detailing</div>
+
+        {% if caption %}
+            <div class="result">
+                <p class="label">Caption:</p>
+                <p>{{ caption }}</p>
+            </div>
+        {% endif %}
+
+        {% if prediction %}
+            <div class="result">
+                <p class="label">Type:</p>
+
+                {% if prediction == "Real Image" %}
+                    <p class="real">{{ prediction }}</p>
+                {% else %}
+                    <p class="ai">{{ prediction }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if not caption and not prediction %}
+            <p style="text-align:center; margin-top:50px;">
+                Upload an image to see results
+            </p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
